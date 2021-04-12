@@ -7,6 +7,7 @@ public class PlayerAttack : MonoBehaviour
     private bool aDown;
     private int attackType;
     private float attackDelay;
+    private bool comboAble = true;
 
     [HideInInspector]
     public int attackCount = 0;
@@ -32,22 +33,23 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        if (aDown && !onAttack)
+        if (aDown && !onAttack && comboAble)
         {            
             switch (player.jumpCount)
             {
                 case 0:
-                    attackCount++;
                     attackType = 1;
+                    attackCount++;
+                    comboAble = false;
 
                     if (attackCount == 3)
                     {
-                        player.rigid.AddForce(player.direction * 10f, ForceMode.Impulse);
+                        player.rigid.AddForce(player.direction * 12f, ForceMode.Impulse);
                         onAttack = true;
-                        attackDelay = 1.0f;
-                        StartCoroutine(AttackDelay(attackDelay));
-                    }                    
-                    
+                    }
+
+                    attackDelay = attackCount == 3 ? 1.3f : 0.3f;
+                    StartCoroutine(AttackDelay(attackDelay));
                     playerAnimation.Attack();
                     break;
 
@@ -66,7 +68,7 @@ public class PlayerAttack : MonoBehaviour
 
                     onAttack = true;
                     attackType = 3;
-                    StartCoroutine(AttackDelay(1.0f));
+                    StartCoroutine(AttackDelay(1.5f));
                     break;
             }
 
@@ -89,10 +91,21 @@ public class PlayerAttack : MonoBehaviour
             case 1:
                 yield return new WaitForSeconds(0.1f);
                 boxCollider.enabled = false;
+                yield return new WaitForSeconds(0.2f);
+                comboAble = true;
                 break;
 
             case 2:
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.1f);
+                boxCollider.enabled = false;
+                yield return new WaitForSeconds(0.1f);
+                boxCollider.enabled = true;
+                yield return new WaitForSeconds(0.1f);
+                boxCollider.enabled = false;
+                break;
+
+            case 3:
+                yield return new WaitForSeconds(0.1f);
                 boxCollider.enabled = false;
                 break;
         }
@@ -106,6 +119,7 @@ public class PlayerAttack : MonoBehaviour
                 yield return new WaitForSeconds(0.3f);
                 player.rigid.useGravity = true;
                 break;
+
             case 3:
                 yield return new WaitForSeconds(0.5f);
                 player.rigid.useGravity = true;
@@ -113,7 +127,14 @@ public class PlayerAttack : MonoBehaviour
         }
         yield return new WaitForSeconds(attackDelay);
 
-        attackCount = 0;
+        if (attackCount == 3)
+        {
+            attackCount = 0;
+        }
+        else
+        {
+            comboAble = true;
+        }
         onAttack = false;
     }
 }

@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     private float speed = 10f;
     private float jumpPower = 12f;
-    private float doubleJumpPower = 16f;
+    private float doubleJumpPower = 12f;
    
     [HideInInspector]
     public float hAxis;
