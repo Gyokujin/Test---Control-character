@@ -18,7 +18,8 @@ public class Player : MonoBehaviour
 
     private float flightTime = 1.0f;
     [HideInInspector]
-    public int jumpCount = 0;    
+    public int jumpCount = 0;
+    private bool onLand;
 
     [HideInInspector]
     public Vector3 moveVec;
@@ -48,10 +49,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Floor")
         {
-            playerAnimation.Land();
-            speed = 10f;
-            jumpCount = 0;
-            flightTime = 1.4f;
+            StartCoroutine(Land());
         }
     }
 
@@ -65,7 +63,7 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        if (playerAttack.onAttack || playerAttack.attackCount != 0)
+        if (playerAttack.onAttack || playerAttack.attackCount != 0 || onLand)
             return;
 
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
@@ -120,5 +118,26 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private IEnumerator Land()
+    {
+        playerAnimation.Land();
+        onLand = true;
+
+        switch (jumpCount)
+        {
+            case 1: 
+                yield return new WaitForSeconds(0.1f);
+                break;
+            case 2:
+                yield return new WaitForSeconds(0.5f);
+                break;
+        }
+
+        speed = 10f;
+        onLand = false;
+        jumpCount = 0;
+        flightTime = 1.4f;       
     }
 }
