@@ -54,32 +54,26 @@ public class PlayerAttack : MonoBehaviour
                     break;
 
                 case 1:
-                    playerAnimation.JumpAttack();
                     player.rigid.useGravity = false;
+                    playerAnimation.JumpAttack();
 
                     onAttack = true;
                     attackType = 2;
-                    StartCoroutine(AttackDelay(1.2f));
+                    StartCoroutine(AttackDelay(0.3f));
                     break;
 
                 case 2:
-                    playerAnimation.DoubleJumpAttack();
                     player.rigid.useGravity = false;
+                    playerAnimation.DoubleJumpAttack();                    
 
                     onAttack = true;
                     attackType = 3;
-                    StartCoroutine(AttackDelay(1.5f));
+                    StartCoroutine(AttackDelay(0.3f));
                     break;
             }
 
             StartCoroutine(HitBox());
         }            
-    }
-
-    private void Idle()
-    {
-        attackCount = 0;
-        onAttack = false;
     }
 
     private IEnumerator HitBox()
@@ -121,20 +115,24 @@ public class PlayerAttack : MonoBehaviour
                 break;
 
             case 3:
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.3f);
                 player.rigid.useGravity = true;
                 break;
         }
         yield return new WaitForSeconds(attackDelay);
 
-        if (attackCount == 3)
+        if (attackType == 1)
         {
-            attackCount = 0;
+            onAttack = false;
+
+            if (attackCount == 3)
+            {
+                attackCount = 0;
+            }
+            else
+            {
+                comboAble = true;
+            }
         }
-        else
-        {
-            comboAble = true;
-        }
-        onAttack = false;
     }
 }

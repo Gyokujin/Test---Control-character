@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     private float speed = 10f;
     private float jumpPower = 12f;
-    private float doubleJumpPower = 12f;
+    private float doubleJumpPower = 9f;
    
     [HideInInspector]
     public float hAxis;
@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public bool gDown;
     private bool jDown;
 
-    private float flightTime = 1.0f;
+    private float flightTime = 0.5f;
     [HideInInspector]
     public int jumpCount = 0;
     private bool onLand;
@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
                     jumpCount++;
                     break;
                 case 1:
-                    if(flightTime > 0.8f)
+                    if(flightTime > 0 && flightTime < 0.25f)
                     {
                         rigid.AddForce(Vector3.up * doubleJumpPower, ForceMode.Impulse);
                         playerAnimation.DoubleJump();
@@ -128,7 +128,7 @@ public class Player : MonoBehaviour
         switch (jumpCount)
         {
             case 1: 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.3f);
                 break;
             case 2:
                 yield return new WaitForSeconds(0.5f);
@@ -138,6 +138,7 @@ public class Player : MonoBehaviour
         speed = 10f;
         onLand = false;
         jumpCount = 0;
-        flightTime = 1.4f;       
+        flightTime = 0.5f;
+        playerAttack.onAttack = false;
     }
 }
